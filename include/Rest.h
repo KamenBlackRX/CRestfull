@@ -21,8 +21,8 @@ class Rest
         pplx::task<void> open() { return m_listener.open(); }
         pplx::task<void> close() { return m_listener.close(); }
 
-        static void on_initialize(const string_t& address);
-        static void on_shutdown();
+        virtual void on_initialize(const string_t& address);
+        virtual void on_shutdown();
 
 
     private:

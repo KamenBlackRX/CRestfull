@@ -7,7 +7,7 @@
 CXX=g++
 CXXFLAGS=-std=c++11
 LFLAGS=-L/usr/lib/x86_64-linux-gnu -lboost_system -lcrypto -lssl -lcpprest
-MAIN=sarah
+MAIN=cppExemple
 SOURCE=$(wildcard src/*.cpp)
 INCLUDES =$(wildcard include/*.h)
 
