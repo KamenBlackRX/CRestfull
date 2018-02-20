@@ -86,6 +86,8 @@ void exemple()
 
 int main(int argc, char* argv[])
 {
+
+
     utility::string_t address = "localhost";
     utility::string_t port = "3570";
 
@@ -94,17 +96,20 @@ int main(int argc, char* argv[])
         address = argv[1];
         port = argv[2];
     }
-
     address.append(port);
 
-    Rest::on_initialize(address);
+    Rest *rest = new Rest(address);
+    rest->on_initialize(address);
 
     std::cout << "Press ENTER to exit." << std::endl;
 
     std::string line;
     std::getline(std::cin, line);
 
-    Rest::on_shutdown();
+    rest->on_shutdown();
+
+    delete rest;
+    rest = NULL;
 
     return 0;
 }

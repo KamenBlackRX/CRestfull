@@ -1,4 +1,7 @@
 #include "../include/Rest.h"
+#include "../include/FileLogger.h"
+//Global pointer for HTTP listner
+std::unique_ptr<Rest> g_http;
 
 // Create Constructor using RAII and bind all handles to required functions.
 Rest::Rest(utility::string_t url) : m_listener(url)
@@ -12,24 +15,28 @@ Rest::Rest(utility::string_t url) : m_listener(url)
 void Rest::handle_get(http_request message)
 {
     std::cout << message.to_string() << std::endl;
+    FileLogger::Instance()->writeToFile(message.to_string());
     message.reply(status_codes::OK);
 }
 
 void Rest::handle_post(http_request message)
 {
     std::cout << message.to_string() << std::endl;
+    FileLogger::Instance()->writeToFile(message.to_string());
     message.reply(status_codes::OK);
 }
 
 void Rest::handle_delete(http_request message)
 {
     std::cout << message.to_string() << std::endl;
+    FileLogger::Instance()->writeToFile(message.to_string());
     message.reply(status_codes::OK);
 }
 
 void Rest::handle_put(http_request message)
 {
     std::cout << message.to_string() << std::endl;
+    FileLogger::Instance()->writeToFile(message.to_string());
     message.reply(status_codes::OK);
 }
 
@@ -39,11 +46,11 @@ void Rest::handle_put(http_request message)
 */
 void Rest::on_initialize(const string_t& address)
 {
-    std::unique_ptr<Rest> g_http;
+
 
     // Build listener path and use it
     uri_builder uri(address);
-    uri.append_path("Sarah/api");
+    uri.append_path("/api");
 
     auto addr = uri.to_uri().to_string();
     g_http = std::unique_ptr<Rest>(new Rest(addr));
@@ -55,6 +62,6 @@ void Rest::on_initialize(const string_t& address)
 
 void Rest::on_shutdown()
 {
-    std::unique_ptr<Rest> g_http;
+
     g_http->close().wait();
 }
