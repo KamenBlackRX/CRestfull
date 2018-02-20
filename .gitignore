@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+#HTML Responses
+*.html
+
+#Log files
+*.log
