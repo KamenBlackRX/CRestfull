@@ -17,18 +17,27 @@ extern "C"
      * @param char** ip  Address for connection
      * @param char** FLAGS Default flags for connection
      */
-    int connection(char*, char**);
+    int CreateConnection(char*, char**);
+
+    /**
+     * Delete and close a active connection.
+     * @return  A code for sucessfull or failed connection.
+     */
+    int DeleteConnection();
 
     /**
      * Execute a non paginate query
      * @param char** type_sql  Path or query for exectuion
      * @return char** return the response of query.
      */
-    char* executeNonPaginateQuery(char*);
+    char** executeNonPaginateQuery(char*);
 
     /* Private Variables */
     PGconn      *conn;      // Connection Pointer
-    PGresult    *result;    //Result point for sql query.
+    PGresult    *res;    //Result point for sql query.
     const char  * info;     // flags info
+    int         nFields;
+    int         i,
+                j;
 
 }
