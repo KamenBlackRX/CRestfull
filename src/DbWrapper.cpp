@@ -2,7 +2,13 @@
 
 extern "C"
 {
-
+    /* Private Variables */
+    PGconn      *conn;      // Connection Pointer
+    PGresult    *res;    //Result point for sql query.
+    const char  * info;     // flags info
+    int         nFields;
+    int         i,
+                j;
     /* Exit connection with a clean exit */
     static void clean_exit(PGconn *conn)
     {
@@ -31,6 +37,7 @@ extern "C"
             clean_exit(conn);
             return -1;
         }
+        return 0;
     }
 
     int DeleteConnection()
@@ -47,6 +54,8 @@ extern "C"
      */
     char** executeNonPaginateQuery(char* type_sql)
     {
+        CreateConnection("localhost", (char**)"noargs");
+
         char** retval;
 
         /* Start a transaction block */
@@ -110,6 +119,8 @@ extern "C"
         /* end the transaction */
         res = PQexec(conn, "END");
         PQclear(res);
+
+        DeleteConnection();
 
         return retval;
     }

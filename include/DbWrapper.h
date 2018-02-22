@@ -32,12 +32,6 @@ extern "C"
      */
     char** executeNonPaginateQuery(char*);
 
-    /* Private Variables */
-    PGconn      *conn;      // Connection Pointer
-    PGresult    *res;    //Result point for sql query.
-    const char  * info;     // flags info
-    int         nFields;
-    int         i,
-                j;
+
 
 }
