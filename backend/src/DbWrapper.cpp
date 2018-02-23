@@ -23,7 +23,8 @@ extern "C"
     int CreateConnection(char* ip, char** FLAGS)
     {
 
-        char* info = "info";
+        char* info = (char*)calloc(50, sizeof(char*));
+        info = "dbname = postgres"; //Defaut value
 
         if(FLAGS[0] != "port")
         {
@@ -40,6 +41,9 @@ extern "C"
             clean_exit(conn);
             return -1;
         }
+
+        free(info);
+
         return 0;
     }
 
