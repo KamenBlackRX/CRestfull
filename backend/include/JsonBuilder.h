@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include <json.h>
 
 using namespace web::json;
@@ -29,9 +30,13 @@ class JsonBuilder
                 }
             }
 
-            if(in == sizeof(vector<string>))
+            if(in == sizeof(std::vector<std::string>))
             {
-
+                std::vector<in>::iterator it;
+                for(it = in.begin(); it != in.end(); it++)
+                {
+                    obj[*it] = *it;
+                }
             }
 
 
