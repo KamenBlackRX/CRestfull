@@ -22,7 +22,11 @@ $(MAIN): $(SOURCE)
 static: $(SOURCE)
 
 	$(CXX) $(CXXFLAGS) $(LFLAGS) -o $(MAIN) -static $^
-	
+
+
+debug:	$(SOURCE)
+
+	$(CXX) $^ -g $(CXXFLAGS) $(LFLAGS) -o $(MAIN) 	
 	
 install:
 
