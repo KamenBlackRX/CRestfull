@@ -6,6 +6,7 @@
 #include <iostream>
 #include <jsoncpp/json/json.h>
 #include <chrono>
+#include "../include/DbWrapper.h"
 
 using namespace utility;                    // Common utilities like string conversions
 using namespace web;                        // Common features like URIs.
@@ -82,23 +83,26 @@ void exemple()
 
 }
 
-
-
+/** Main entry point */
 int main(int argc, char* argv[])
 {
-
-
-    utility::string_t address = "localhost";
-    utility::string_t port = "3570";
+    // This is the exemple to init psql
+    char** result = executeNonPaginateQuery("SELECT * FROM pg_maintence");
+    // Append default address if has no args seted.
+    utility::string_t address = "http://localhost/";
+    utility::string_t port = "8000";
 
     if(argc == 3)
     {
         address = argv[1];
         port = argv[2];
     }
+
     address.append(port);
 
+    //Init and start HTTP listener.
     Rest *rest = new Rest(address);
+
     rest->on_initialize(address);
 
     std::cout << "Press ENTER to exit." << std::endl;
@@ -106,6 +110,7 @@ int main(int argc, char* argv[])
     std::string line;
     std::getline(std::cin, line);
 
+    //Cleanup
     rest->on_shutdown();
 
     delete rest;

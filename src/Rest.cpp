@@ -47,7 +47,6 @@ void Rest::handle_put(http_request message)
 void Rest::on_initialize(const string_t& address)
 {
 
-
     // Build listener path and use it
     uri_builder uri(address);
     uri.append_path("/api");
@@ -62,6 +61,5 @@ void Rest::on_initialize(const string_t& address)
 
 void Rest::on_shutdown()
 {
-
     g_http->close().wait();
 }
