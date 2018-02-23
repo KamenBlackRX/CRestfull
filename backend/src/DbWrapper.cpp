@@ -61,7 +61,7 @@ extern "C"
         info[0] = "port";
         info[1] = "5432";
         info[2] = "db";
-        info[3] = "ivendas-blank";
+        info[3] = "blank";
 
         CreateConnection("localhost", info);
 
