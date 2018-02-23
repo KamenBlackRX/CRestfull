@@ -22,8 +22,10 @@ extern "C"
      */
     int CreateConnection(char* ip, char** FLAGS)
     {
-        char* info = (char*)malloc(sizeof(char));
-        if(FLAGS[1] == "")
+
+        char* info = "info";
+
+        if(FLAGS[0] != "port")
         {
             printf("We dont have a connection info. will try default values.");
             info = "dbname = postgres";
@@ -55,7 +57,13 @@ extern "C"
      */
     char** executeNonPaginateQuery(char* type_sql)
     {
-        CreateConnection("localhost", (char**)"noargs");
+        char** info = (char**) calloc(10, 10 * sizeof(char));
+        info[0] = "port";
+        info[1] = "5432";
+        info[2] = "db";
+        info[3] = "ivendas-blank";
+
+        CreateConnection("localhost", info);
 
         char** retval;
 
