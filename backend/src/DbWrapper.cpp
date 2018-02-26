@@ -1,76 +1,83 @@
 #include "../include/DbWrapper.h"
 
-extern "C"
+extern "C" {
+/* Private Variables */
+PGconn *conn;     // Connection Pointer
+PGresult *res;    //Result point for sql query.
+char *info; // flags info
+int nFields;
+int i,
+    j;
+/* Exit connection with a clean exit */
+static void clean_exit(PGconn *conn)
 {
-    /* Private Variables */
-    PGconn      *conn;      // Connection Pointer
-    PGresult    *res;    //Result point for sql query.
-    const char  * info;     // flags info
-    int         nFields;
-    int         i,
-                j;
-    /* Exit connection with a clean exit */
-    static void clean_exit(PGconn *conn)
-    {
-        PQfinish(conn);
-    }
+    PQfinish(conn);
+}
 
-    /**
+/**
      * Create connection and store his status response.
      * @param char** ip  Address for connection
      * @param char** FLAGS Default flags for connection
      */
-    int CreateConnection(char* ip, char** FLAGS)
+int CreateConnection(char *ip, char **FLAGS)
+{
+
+    info = (char *)calloc(50, sizeof(char *));
+
+    info = "host=127.0.0.1 user=blank password=blank port=5432 dbname = blank"; //Defaut value
+
+    if (FLAGS[0] != "port")
     {
+        printf("We dont have a connection info. will try default values.");
+        info = "dbname = postgres";
+    }
 
-        char* info = (char*)calloc(50, sizeof(char*));
-        info = "dbname = postgres"; //Defaut value
+    printf("String Connection: %s\n", info);
+    conn = PQconnectdb(info);
 
-        if(FLAGS[0] != "port")
-        {
-            printf("We dont have a connection info. will try default values.");
-            info = "dbname = postgres";
-        }
+    /* Check to see that the backend connection was successfully made */
+    if (PQstatus(conn) != CONNECTION_OK)
+    {
+        fprintf(stderr, "Connection to database failed: %s", PQerrorMessage(conn));
+        clean_exit(conn);
+        return -1;
+    }
 
-        conn = PQconnectdb(info);
-
-        /* Check to see that the backend connection was successfully made */
-        if (PQstatus(conn) != CONNECTION_OK)
-        {
-            fprintf(stderr, "Connection to database failed: %s",PQerrorMessage(conn));
-            clean_exit(conn);
-            return -1;
-        }
-
+    if(info == NULL)
         free(info);
 
-        return 0;
-    }
+    return 0;
+}
 
-    int DeleteConnection()
-    {
-        /* close the connection to the database and cleanup */
-        PQfinish(conn);
-        return 0;
-    }
+int DeleteConnection()
+{
+    /* close the connection to the database and cleanup */
+    clean_exit(conn);
+    return 0;
+}
 
-    /**
+/**
      * Execute a non paginate query
      * @param char** type_sql  Path or query for exectuion
      * @return char** return the response of query.
      */
-    char** executeNonPaginateQuery(char* type_sql)
+char **executeNonPaginateQuery(char *type_sql, const char* FLAG)
+{
+    // Get info conncetion and try to connect it
+    char **info = (char **)calloc(10, 10 * sizeof(char));
+    info[0] = "port";
+    info[1] = "5432";
+    info[2] = "db";
+    info[3] = "teste";
+
+    CreateConnection("localhost", info);
+
+    char **retval;
+    // If we got a null type_sql, run a default query.
+    // TO-DO Implement a error message.
+    if (type_sql == "" || type_sql == NULL)
     {
-        char** info = (char**) calloc(10, 10 * sizeof(char));
-        info[0] = "port";
-        info[1] = "5432";
-        info[2] = "db";
-        info[3] = "blank";
-
-        CreateConnection("localhost", info);
-
-        char** retval;
-
+        printf("Proceding with null sql");
         /* Start a transaction block */
         res = PQexec(conn, "BEGIN");
         if (PQresultStatus(res) != PGRES_COMMAND_OK)
@@ -96,6 +103,7 @@ extern "C"
             PQclear(res);
             clean_exit(conn);
         }
+
         PQclear(res);
 
         res = PQexec(conn, "FETCH ALL in myportal");
@@ -118,7 +126,7 @@ extern "C"
             for (j = 0; j < nFields; j++)
             {
                 printf("%-15s", PQgetvalue(res, i, j));
-                retval[j] =  PQgetvalue(res, i, j);
+                retval[j] = PQgetvalue(res, i, j);
             }
             printf("\n");
         }
@@ -132,11 +140,65 @@ extern "C"
         /* end the transaction */
         res = PQexec(conn, "END");
         PQclear(res);
+    }
+    else
+    {
+        printf("\nProceed with a given sql");
+        ///Insert Routine.
+        printf("\nDebug: FLAG -> %s", FLAG);
+        if(FLAG[0] == 'I')
+        {
+            printf("\nAttempt to connect...");
+            // Check to see that the backend connection was successfully made
+            if (PQstatus(conn) != CONNECTION_OK)
+            {
+                fprintf(stderr, "Connection to database failed: %s", PQerrorMessage(conn));
+                DeleteConnection();
+                exit(1);
+            }
+            else
+            {
+                printf("\nConnection to database sucessfull!");
+            }
 
-        DeleteConnection();
+            printf("\nExecuting query:\n %s", type_sql);
 
-        return retval;
+            res = PQexec(conn, type_sql);
+            char* status = PQresStatus(PQresultStatus(res));
+
+            if (PQresultStatus(res) != PGRES_COMMAND_OK)
+            {
+                fprintf(stderr, "\nINSERT failed: %s", PQerrorMessage(conn));
+                DeleteConnection();
+                exit(-1);
+            }
+            else
+            {
+              printf("\nInsert was made with sucesss!");
+              printf("\nQuery %s executed with status: %s\n ", type_sql, status);
+            }
+
+            PQclear(res);
+            DeleteConnection();
+            return &status;
+        }
+
+        //Update Routine.
+        //TODO Need implementation
+        if(FLAG == "U")
+        {
+            //Execute sql and return his results.
+            res = PQexec(conn, type_sql);
+
+        }
     }
 
+    DeleteConnection();
+    return retval;
 
+}
+
+/**
+     * Setup and run query in asyncmode.
+     */
 }
