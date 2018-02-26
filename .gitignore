@@ -36,3 +36,6 @@
 
 #Log files
 *.log
+
+#C objects
+*.gch
