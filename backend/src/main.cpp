@@ -83,13 +83,38 @@ void exemple()
 
 }
 
-/** Main entry point */
-int main(int argc, char* argv[])
+int ShowMenu()
+{
+    //Selected option for givin test. and set 1 as default
+    int select = 1;
+
+    std::cout << "|-------------------------------------------------|" << std::endl;
+    std::cout << "|-     CPPRestFull exemple api - Version 0.0.1   -|" << std::endl;
+    std::cout << "|-------------------------------------------------|" << std::endl;
+    std::cout << "\nMenu Option:\n"<< std::endl;
+    std::cout << "|-------------------------------------------------|" << std::endl;
+    std::cout << "|- Option 1 ->  Test a full CRUD operation        |" << std::endl;
+    std::cout << "|- Option 2 ->  Test a rest with basic endpoint   |" << std::endl;
+    std::cout << "|-------------------------------------------------|" << std::endl;
+    std::cout << "\nSelect option[1-2]: ";
+    std::cin >> select;
+    // Return giving operation.
+    return select;
+}
+
+void CrudExemple()
 {
     // This is the exemple to init psql
     startBenchmark();
     char** result = executeNonPaginateQuery("INSERT INTO program_version (desc_version,version_date) VALUES (2, now())", "I");
+    std::cout << "Result from Insert Test: " << result << std::endl;
     finishBenchmark();
+
+}
+
+void CasaBlancaExemple(int argc, char** argv)
+{
+
     // Append default address if has no args seted.
     utility::string_t address = "http://localhost/";
     utility::string_t port = "8000";
@@ -118,5 +143,27 @@ int main(int argc, char* argv[])
     delete rest;
     rest = NULL;
 
+}
+
+void SelectMenu(int code, int argc, char** argv)
+{
+    switch(code)
+    {
+        case 1:
+            CrudExemple();
+            break;
+        case 2:
+            //CasaBlancaExemple();
+            break;
+        default:
+            exit(0);
+    }
+}
+
+/** Main entry point */
+int main(int argc, char* argv[])
+{
+    int response = ShowMenu();
+    SelectMenu(response, argc, argv);
     return 0;
 }
