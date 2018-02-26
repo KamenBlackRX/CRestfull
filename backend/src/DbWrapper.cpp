@@ -4,7 +4,7 @@ extern "C" {
 /* Private Variables */
 PGconn *conn;     // Connection Pointer
 PGresult *res;    //Result point for sql query.
-const char *info; // flags info
+char *info; // flags info
 int nFields;
 int i,
     j;
@@ -22,7 +22,7 @@ static void clean_exit(PGconn *conn)
 int CreateConnection(char *ip, char **FLAGS)
 {
 
-    char *info = (char *)calloc(50, sizeof(char *));
+    info = (char *)calloc(50, sizeof(char *));
 
     info = "host=127.0.0.1 user=blank password=blank port=5432 dbname = blank"; //Defaut value
 
@@ -32,6 +32,7 @@ int CreateConnection(char *ip, char **FLAGS)
         info = "dbname = postgres";
     }
 
+    printf("String Connection: %s\n", info);
     conn = PQconnectdb(info);
 
     /* Check to see that the backend connection was successfully made */
@@ -42,7 +43,8 @@ int CreateConnection(char *ip, char **FLAGS)
         return -1;
     }
 
-    free(info);
+    if(info == NULL)
+        free(info);
 
     return 0;
 }
@@ -50,7 +52,7 @@ int CreateConnection(char *ip, char **FLAGS)
 int DeleteConnection()
 {
     /* close the connection to the database and cleanup */
-    PQfinish(conn);
+    clean_exit(conn);
     return 0;
 }
 
@@ -75,7 +77,7 @@ char **executeNonPaginateQuery(char *type_sql, const char* FLAG)
     // TO-DO Implement a error message.
     if (type_sql == "" || type_sql == NULL)
     {
-
+        printf("Proceding with null sql");
         /* Start a transaction block */
         res = PQexec(conn, "BEGIN");
         if (PQresultStatus(res) != PGRES_COMMAND_OK)
@@ -141,29 +143,48 @@ char **executeNonPaginateQuery(char *type_sql, const char* FLAG)
     }
     else
     {
+        printf("\nProceed with a given sql");
         ///Insert Routine.
-        if(FLAG == "I")
+        printf("\nDebug: FLAG -> %s", FLAG);
+        if(FLAG[0] == 'I')
         {
+            printf("\nAttempt to connect...");
             // Check to see that the backend connection was successfully made
             if (PQstatus(conn) != CONNECTION_OK)
             {
                 fprintf(stderr, "Connection to database failed: %s", PQerrorMessage(conn));
-                PQfinish(conn);
+                DeleteConnection();
                 exit(1);
             }
+            else
+            {
+                printf("\nConnection to database sucessfull!");
+            }
+
+            printf("\nExecuting query:\n %s", type_sql);
 
             res = PQexec(conn, type_sql);
+            char* status = PQresStatus(PQresultStatus(res));
 
             if (PQresultStatus(res) != PGRES_COMMAND_OK)
             {
-                fprintf(stderr, "INSERT failed: %s", PQerrorMessage(conn));
+                fprintf(stderr, "\nINSERT failed: %s", PQerrorMessage(conn));
                 DeleteConnection();
+                exit(-1);
+            }
+            else
+            {
+              printf("\nInsert was made with sucesss!");
+              printf("\nQuery %s executed with status: %s\n ", type_sql, status);
             }
 
             PQclear(res);
+            DeleteConnection();
+            return &status;
         }
 
         //Update Routine.
+        //TODO Need implementation
         if(FLAG == "U")
         {
             //Execute sql and return his results.

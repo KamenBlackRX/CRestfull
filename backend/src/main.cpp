@@ -87,7 +87,9 @@ void exemple()
 int main(int argc, char* argv[])
 {
     // This is the exemple to init psql
-    char** result = executeNonPaginateQuery("INSERT INTO version (id,desc_version,version_date) VALUES (1, 0.0.1, date::now())", "I");
+    startBenchmark();
+    char** result = executeNonPaginateQuery("INSERT INTO program_version (desc_version,version_date) VALUES (2, now())", "I");
+    finishBenchmark();
     // Append default address if has no args seted.
     utility::string_t address = "http://localhost/";
     utility::string_t port = "8000";
