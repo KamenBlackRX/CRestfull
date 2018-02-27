@@ -5,8 +5,9 @@
 ################################################# 
 
 CXX=g++
-CXXFLAGS=-std=c++14
-LFLAGS=-L/usr/lib/x86_64-linux-gnu -lboost_system -lcrypto -lssl -lcpprest -lpq
+CXXFLAGS=-std=c++14 -D WITH_PSQL
+LFLAGS=-L/usr/lib/x86_64-linux-gnu \
+	-lboost_system -lcrypto -lssl -lcpprest -lpq 
 MAIN=cppExemple
 SOURCE=$(wildcard backend/src/*.cpp)
 INCLUDES =$(wildcard backend/include/*.h)
