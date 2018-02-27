@@ -1,8 +1,21 @@
+#include <memory>
+#include <vector>
+#include <sstream>
+
 #include "../include/FileLogger.h"
 
 // Global static pointer used to ensure a single instance of the class.
 FileLogger* FileLogger::m_pInstance = NULL;
 
+/* Clean instance inside dctor. */
+FileLogger::~FileLogger()
+{
+        if ( m_pInstance != NULL )
+            delete m_pInstance;
+}
+
+
+/* Create a point with class instance and return it to file. */
 FileLogger* FileLogger::Instance()
 {
    if (!m_pInstance)   // Only allow one instance of class to be generated.
@@ -11,10 +24,7 @@ FileLogger* FileLogger::Instance()
 }
 
 
-/**
- * Write log to file with default configuration.
- * @param string message A string reference for log content.
- */
+/* Write log to file with giving message */
 void FileLogger::writeToFile(const std::string& message)
 {
     // mutex to protect file access (shared across threads)
@@ -38,5 +48,49 @@ void FileLogger::writeToFile(const std::string& message)
     // mutex will be unlocked 2nd (from lock destructor) when leaving
     // scope (regardless of exception)
 
+}
+
+/**
+ *  Implemented for Gigantes Files(2GB +)
+ * send to a string.
+ * @return string  Return content of file to string.
+*/
+template <typename Char, typename Traits,
+          typename Allocator = std::allocator<Char>>
+auto read_stream_into_string( std::basic_istream<Char, Traits>& in, Allocator alloc = {})
+{
+
+    std::basic_ostringstream<Char, Traits, Allocator>
+        ss(std::basic_string<Char, Traits, Allocator>(
+        std::move(alloc)));
+
+    if (!(ss << in.rdbuf()))
+        throw std::ios_base::failure{"error"};
+
+    return ss.str();
+}
+
+
+/** Read log and Send to string */
+std::string FileLogger::readLog()
+{
+    //lock thread using mutex and make operations.
+    static std::mutex mutex;
+    std::lock_guard<std::mutex> lock(mutex);
+
+    std::ifstream file("Cpprest.log");
+    if(!file.is_open())
+    {
+        throw std::runtime_error("Unable to open file");
+    }
+
+    //Iterate from file and show his content. For small files
+    auto s = [&file]{
+        std::ostringstream ss{};
+        ss << file.rdbuf();
+        return ss.str();
+    }();
+
+    return s;
 }
 

@@ -5,7 +5,7 @@
 ################################################# 
 
 CXX=g++
-CXXFLAGS=-std=c++11
+CXXFLAGS=-std=c++14
 LFLAGS=-L/usr/lib/x86_64-linux-gnu -lboost_system -lcrypto -lssl -lcpprest -lpq
 MAIN=cppExemple
 SOURCE=$(wildcard backend/src/*.cpp)

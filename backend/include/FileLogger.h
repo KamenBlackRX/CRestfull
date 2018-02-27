@@ -10,23 +10,37 @@ class FileLogger
 {
     public:
 
+    /* Static instance for Singleton access */
     static FileLogger* Instance();
 
+    /**
+     * Write log to file with default configuration.
+     * @param string message A string reference for log content.
+    */
     void writeToFile(const std::string& message);
-    bool closeFileLog(); // Will be depreciated with RAII implementations.
+
+
+
+
+
+
+
+    /* Read all log content from file,
+     * send to stdoud and store in a string.
+     * @return string  Return content of file to string.
+    */
+    std::string readLog();
+
 
     private:
+
     /* Singleton constructors */
     FileLogger() {};
     FileLogger(FileLogger const&); // Prevent copy
     FileLogger& operator=(FileLogger const&); // Prevent assigment.
 
-    /**
-     * Open a desired log file and store his response.
-     * @param string  Path for access the file. Needs be writable and readable.
-     * @return ofstream  Response for open operation.
-     */
-    std::ofstream openLogFile(std::string Filepath); // Will be depreciated with RAII implementations.
+    /* Clean instance before exit. */
+    ~FileLogger();
 
     static FileLogger* m_pInstance; // Instance for singleton pattern.
 

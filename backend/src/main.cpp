@@ -136,7 +136,10 @@ void CasaBlancaExemple(int argc, char** argv)
 
     std::string line;
     std::getline(std::cin, line);
+    while(true)
+    {
 
+    }
     //Cleanup
     rest->on_shutdown();
 
@@ -153,7 +156,7 @@ void SelectMenu(int code, int argc, char** argv)
             CrudExemple();
             break;
         case 2:
-            //CasaBlancaExemple();
+            CasaBlancaExemple(argc, argv);
             break;
         default:
             exit(0);
