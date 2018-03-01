@@ -50,6 +50,11 @@ struct MemoryMapping
 
             std::string memory = ToString<size_t>(GetCurrentRSSMemory());
 
+            if(memory.empty())
+            {
+                throw;
+            }
+
             if (typeid(T).name() == "Ss")
             {
 
@@ -66,19 +71,21 @@ struct MemoryMapping
                 }
 
                 return memory;
+
             }
              //
             if (typeid(T).name() == "size_t")
             {
                 std::cout << "Not Imeplemented.";
+                return 0L;
             }
+
         }
         catch(std::exception& ex)
         {
             std::cout << "Execption has raised.\nDetails: " << ex.what() << std::endl;
+
         }
-
-
     }
 
     /**
@@ -215,23 +222,13 @@ int CasaBlancaExemple(int argc, char **argv)
 
     std::string line;
     std::cout << "Press ENTER to exit." << std::endl;
-    MemoryMapping<std::string>*  mmapping = new MemoryMapping<std::string>();
     std::getline(std::cin, line);
 
-
-    while (line == "")
-    {
-
-        std::cout << "===================================" << std::endl;
-        std::cout << "| " << mmapping->GetMemoryResume("M") << " |" << std::endl;
-        std::cout << "===================================" << std::endl;
-        system("sleep 1");
-    }
 
     //Cleanup
     rest->on_shutdown();
 
-    delete rest, mmapping;
+    delete rest;
     rest = NULL;
 
     return 0;
@@ -257,10 +254,23 @@ void SelectMenu(int code, int argc, char **argv)
 /** Main entry point */
 int main(int argc, char *argv[])
 {
+    //MemoryMapping<std::string> *mmapping = new MemoryMapping<std::string>();
+    //std::string _response = mmapping->GetMemoryResume("M");
+
+
+    // Show memory
+    //std::cout << "===================================" << std::endl;
+    //std::cout << _response << std::endl;
+    //std::cout << "===================================" << std::endl;
+
+    // Show logs
     std::cout << "Show logs: " << std::endl;
     FileLogger::Instance()->readLog();
     int response = ShowMenu();
     SelectMenu(response, argc, argv);
+
+    delete mmapping;
+    mmapping = NULL;
 
     return 0;
 }
