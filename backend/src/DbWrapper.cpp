@@ -257,6 +257,7 @@ extern "C"
         BSON_APPEND_OID (doc, "_id", &oid);
         BSON_APPEND_UTF8 (doc, "hello", "world");
 
+        //TO-DO need implementantion and see what happen for failures.
         if (!mongoc_collection_insert_one (
             collection, doc, NULL, NULL, &error)) {
             fprintf (stderr, "%s\n", error.message);

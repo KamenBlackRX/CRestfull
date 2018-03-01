@@ -43,3 +43,6 @@
 #Visual studio configuration
 .vscode
 .vscode/*
+
+#program binary
+cppExemple

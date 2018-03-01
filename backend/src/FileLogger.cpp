@@ -67,6 +67,8 @@ auto read_stream_into_string( std::basic_istream<Char, Traits>& in, Allocator al
     if (!(ss << in.rdbuf()))
         throw std::ios_base::failure{"error"};
 
+    std::cout << ss.srt();
+
     return ss.str();
 }
 
@@ -88,6 +90,7 @@ std::string FileLogger::readLog()
     auto s = [&file]{
         std::ostringstream ss{};
         ss << file.rdbuf();
+        std::cout << ss.str();
         return ss.str();
     }();
 
