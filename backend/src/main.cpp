@@ -11,6 +11,7 @@
 #include <sys/resource.h>
 #include <ios>
 #include "../include/DbWrapper.h"
+#include "../include/Utils.hpp"
 
 using namespace utility;              // Common utilities like string conversions
 using namespace web;                  // Common features like URIs.
@@ -21,97 +22,6 @@ using namespace concurrency::streams; // Asynchronous streams
 // Set clock default
 using Clock = std::chrono::high_resolution_clock;
 std::chrono::time_point<std::chrono::_V2::system_clock, std::chrono::nanoseconds> t1, t2;
-
-// static Struct with default constructor
-template <typename T>
-struct MemoryMapping
-{
-
-    //convert All types for string
-    template<typename K>
-    std::string ToString(K k)
-    {
-
-        std::stringstream ss;
-        ss << k;
-        return ss.str();
-    }
-
-    /**
-     * Return a report with memory resume
-     * @param std::string flag  Flag to set type of memory count (Kb, Mb, Gb)
-     * @return T  Return a generic type.
-     */
-    T GetMemoryResume(std::string flag)
-    {
-        // Recive as String
-        try
-        {
-
-            std::string memory = ToString<size_t>(GetCurrentRSSMemory());
-
-            if(memory.empty())
-            {
-                throw;
-            }
-
-            if (typeid(T).name() == "Ss")
-            {
-
-                if (flag == "M")
-                {
-                    std::cout << "Memory Virtual: " << memory << " Mb." << std::endl;
-                    std::cout << "Memory Residential: " << memory << " Mb." << std::endl;
-                }
-                else
-                {
-
-                    std::cout << "Memory Virtual: " << memory << " Kb." << std::endl;
-                    std::cout << "Memory Residential: " << memory << " Kb." << std::endl;
-                }
-
-                return memory;
-
-            }
-             //
-            if (typeid(T).name() == "size_t")
-            {
-                std::cout << "Not Imeplemented.";
-                return 0L;
-            }
-
-        }
-        catch(std::exception& ex)
-        {
-            std::cout << "Execption has raised.\nDetails: " << ex.what() << std::endl;
-
-        }
-    }
-
-    /**
-     * Get Curren Residensial memory with current PID
-     * @param int* pid  Current given PID to revice memory mapping
-     * @return size_t  Return current Rss value from memory mapping kernel.
-     */
-    size_t GetCurrentRSSMemory()
-    {
-        FILE *fp = NULL;
-        long rss = 0L;
-
-        if ((fp = fopen("/proc/self/statm", "r")) == NULL)
-            return (size_t)0L; /* Can't open? */
-
-        if (fscanf(fp, "%*s%ld", &rss) != 1)
-        {
-            fclose(fp);
-            return (size_t)0L; /* Can't read? */
-        }
-
-        fclose(fp);
-        return (size_t)rss * (size_t)sysconf(_SC_PAGESIZE);
-    }
-};
-
 
 /** StartBenchmark Timer. */
 void startBenchmark()
@@ -254,14 +164,25 @@ void SelectMenu(int code, int argc, char **argv)
 /** Main entry point */
 int main(int argc, char *argv[])
 {
-    //MemoryMapping<std::string> *mmapping = new MemoryMapping<std::string>();
-    //std::string _response = mmapping->GetMemoryResume("M");
+    MemoryMapping<std::string> *mmapping = new MemoryMapping<std::string>();
 
+    if(mmapping == nullptr)
+    {
+        std::cout << "We cant initalize memory mapping pointer." << std::endl;
+    }
 
-    // Show memory
-    //std::cout << "===================================" << std::endl;
-    //std::cout << _response << std::endl;
-    //std::cout << "===================================" << std::endl;
+    std::string _response = mmapping->GetMemoryResume("M");
+    if(_response.empty())
+    {
+        std::cout << "We cant get memory!" << std::endl;
+    }
+    else
+    {
+        // Show memory
+        std::cout << "===================================" << std::endl;
+        std::cout << _response << std::endl;
+        std::cout << "===================================" << std::endl;
+    }
 
     // Show logs
     std::cout << "Show logs: " << std::endl;
