@@ -2,7 +2,7 @@
 
 #pragma once
 // static Struct with default constructor
-template <typename T>
+template<typename T>
 class MemoryMapping
 {
 
@@ -43,28 +43,40 @@ class MemoryMapping
             // Recive as String
             try
             {
+                std::string memory;
 
-                std::string memory = ToString<size_t>(GetCurrentRSSMemory());
-
-                if(memory.empty())
-                {
-                    throw;
-                }
-
-                if (typeid(T).name() == "Ss")
+                if (typeid(T) == typeid(std::string))
                 {
 
                     if (flag == "M")
                     {
+                        //Get value , convert to defaul kb, and show to string.
+                        size_t memory_size = GetCurrentRSSMemory() / 1024 / 1024 / 1024;
+                        memory = ToString<size_t>(memory_size);
+
+                        if(memory.empty())
+                        {
+                            throw;
+                        }
+
                         std::cout << "Memory Virtual: " << memory << " Mb." << std::endl;
                         std::cout << "Memory Res: " << memory << " Mb." << std::endl;
                     }
                     else
                     {
+                        //Get value , convert to defaul kb, and show to string.
+                        size_t memory_size = GetCurrentRSSMemory() / 1024 / 1024;
+                        memory = ToString<size_t>(memory_size);
+
+                        if(memory.empty())
+                        {
+                            throw;
+                        }
 
                         std::cout << "Memory Virtual: " << memory << " Kb." << std::endl;
                         std::cout << "Memory Res: " << memory << " Kb." << std::endl;
                     }
+
 
                     return memory;
 
@@ -74,8 +86,6 @@ class MemoryMapping
                     std::cout << "Not Imeplemented.";
                     return 0L;
                 }
-
-                return "NULL";
 
             }
             catch(std::exception& ex)

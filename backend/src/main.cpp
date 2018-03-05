@@ -1,6 +1,7 @@
 //Include filelogger lib.
 #include "../include/FileLogger.h"
 #include "../include/Rest.h"
+#include <vector>
 #include <cpprest/http_client.h>
 #include <cpprest/filestream.h>
 #include <iostream>
@@ -164,32 +165,43 @@ void SelectMenu(int code, int argc, char **argv)
 /** Main entry point */
 int main(int argc, char *argv[])
 {
+    // Response;
+    std::string _response;
+
+    //Scan memory and set size of program in memory
     MemoryMapping<std::string> *mmapping = new MemoryMapping<std::string>();
-
     if(mmapping == nullptr)
-    {
         std::cout << "We cant initalize memory mapping pointer." << std::endl;
+
+
+    for(auto&& x : std::vector<std::string> { argv, argv + argc })
+    {
+        // Show memory as args need.
+        if(x == "--kb")
+        {
+            std::cout << x << std::endl;
+            _response = mmapping->GetMemoryResume("K");
+        }
+        else
+        {
+            _response = mmapping->GetMemoryResume("M");
+        }
+
     }
 
-    std::string _response = mmapping->GetMemoryResume("M");
+
+
+    //if Response is empty go on else show memory.
     if(_response.empty())
-    {
         std::cout << "We cant get memory!" << std::endl;
-    }
-    else
-    {
-        // Show memory
-        std::cout << "===================================" << std::endl;
-        std::cout << _response << std::endl;
-        std::cout << "===================================" << std::endl;
-    }
 
     // Show logs
     std::cout << "Show logs: " << std::endl;
     FileLogger::Instance()->readLog();
+    // Select menu
     int response = ShowMenu();
     SelectMenu(response, argc, argv);
-
+    //Clean and exit.
     delete mmapping;
     mmapping = NULL;
 
