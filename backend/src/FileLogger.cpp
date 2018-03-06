@@ -23,7 +23,6 @@ FileLogger* FileLogger::Instance()
    return m_pInstance;
 }
 
-
 /* Write log to file with giving message */
 void FileLogger::writeToFile(const std::string& message)
 {
@@ -34,7 +33,7 @@ void FileLogger::writeToFile(const std::string& message)
     std::lock_guard<std::mutex> lock(mutex);
 
     // try to open file
-    std::ofstream file("Cpprest.log");
+    std::ofstream file("Cpprest.log", std::ofstream::out | std::ofstream::app);
     if (!file.is_open())
         throw std::runtime_error("unable to open file");
 
@@ -42,13 +41,40 @@ void FileLogger::writeToFile(const std::string& message)
     auto timestamp = std::time(nullptr);
 
     // write message to file
-    file << std::ctime(&timestamp) << message << std::endl;
+    file << std::ctime(&timestamp) << " | " << message << std::endl;
 
     // file will be closed 1st when leaving scope (regardless of exception)
     // mutex will be unlocked 2nd (from lock destructor) when leaving
     // scope (regardless of exception)
 
 }
+
+/* Write log to file with giving message and level */
+void FileLogger::writeToFile(const std::string& message, const std::string& _level)
+{
+    // mutex to protect file access (shared across threads)
+    static std::mutex mutex;
+
+    // lock mutex before accessing file
+    std::lock_guard<std::mutex> lock(mutex);
+
+    // try to open file
+    std::ofstream file("Cpprest.log", std::ofstream::out | std::ofstream::app);
+    if (!file.is_open())
+        throw std::runtime_error("unable to open file");
+
+    // instaciate time and print to file.
+    auto timestamp = std::time(nullptr);
+
+    // write message to file
+    file << "[ " << _level << " ] | " << std::ctime(&timestamp) << message << std::endl;
+
+    // file will be closed 1st when leaving scope (regardless of exception)
+    // mutex will be unlocked 2nd (from lock destructor) when leaving
+    // scope (regardless of exception)
+
+}
+
 
 /**
  *  Implemented for Gigantes Files(2GB +)

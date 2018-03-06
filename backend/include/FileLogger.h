@@ -19,11 +19,11 @@ class FileLogger
     */
     void writeToFile(const std::string& message);
 
-
-
-
-
-
+    /**
+     * Write log to file with level verbosity.
+     * @param string message A string reference for log content.
+    */
+    void writeToFile(const std::string& messagem, const std::string& _level);
 
     /* Read all log content from file,
      * send to stdoud and store in a string.

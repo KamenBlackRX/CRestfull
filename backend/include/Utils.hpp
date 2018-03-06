@@ -72,9 +72,15 @@ class MemoryMapping
                         {
                             throw;
                         }
-
+                        // Alocate memory and set message
+                        std::string* message = new std::string("Memory Virtual: ");
+                        FileLogger::Instance()->writeToFile( message->append(memory + " Kb."), "INFO");
+                        // Print message
                         std::cout << "Memory Virtual: " << memory << " Kb." << std::endl;
                         std::cout << "Memory Res: " << memory << " Kb." << std::endl;
+                        //Delete memory
+                        delete(message);
+                        message = NULL;
                     }
 
 
