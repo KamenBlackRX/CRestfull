@@ -1,6 +1,6 @@
 //Include filelogger lib.
 #include "../include/FileLogger.h"
-#include "../include/Rest.h"
+#include "../include/Rest.hpp"
 #include <vector>
 #include <cpprest/http_client.h>
 #include <cpprest/filestream.h>
@@ -45,31 +45,26 @@ void exemple()
     startBenchmark();
 
     // Open stream to output file.
-    pplx::task<void> requestTask = fstream::open_ostream(U("results.html")).then([=](ostream outFile)
-     {
-
-        *fileStream = outFile;
-        // Create http_client to send the request.
-        http_client client(U("http://www.bing.com/"));
-        // Build request URI and start the request.
-        uri_builder builder(U("/search"));
-        builder.append_query(U("q"), U("cpprestsdk github"));
-        return client.request(methods::GET, builder.to_string());
-    }
-    ).then([=](http_response response)
-    {
-        // Handle response headers arriving.
-        printf("Received response status code:%u\n", response.status_code());
-        // Write response body into the file.
-        return response.body().read_to_end(fileStream->streambuf());
-    }
-    ).then([=](size_t)
-    {
-        // Close the file stream.
-        return fileStream->close();
-        finishBenchmark();
-    }
-    );
+    pplx::task<void> requestTask = fstream::open_ostream(U("results.html")).then([=](ostream outFile) {
+                                                                               *fileStream = outFile;
+                                                                               // Create http_client to send the request.
+                                                                               http_client client(U("http://www.bing.com/"));
+                                                                               // Build request URI and start the request.
+                                                                               uri_builder builder(U("/search"));
+                                                                               builder.append_query(U("q"), U("cpprestsdk github"));
+                                                                               return client.request(methods::GET, builder.to_string());
+                                                                           })
+                                       .then([=](http_response response) {
+                                           // Handle response headers arriving.
+                                           printf("Received response status code:%u\n", response.status_code());
+                                           // Write response body into the file.
+                                           return response.body().read_to_end(fileStream->streambuf());
+                                       })
+                                       .then([=](size_t) {
+                                           // Close the file stream.
+                                           return fileStream->close();
+                                           finishBenchmark();
+                                       });
     // Wait for all the outstanding I/O to complete and handle any exceptions
     try
     {
@@ -135,10 +130,10 @@ int CasaBlancaExemple(int argc, char **argv)
     std::cout << "Press ENTER to exit." << std::endl;
     std::getline(std::cin, line);
 
-
     //Cleanup
     rest->on_shutdown();
 
+    //Dealocate Sources
     delete rest;
     rest = NULL;
 
@@ -165,19 +160,22 @@ void SelectMenu(int code, int argc, char **argv)
 /** Main entry point */
 int main(int argc, char *argv[])
 {
+    //Log file
+    FileLogger::Instance()->LogName = "restapi.log";
+    FileLogger::Instance()->writeToFile("Entry main point", "INFO");
+
     // Response;
     std::string _response;
 
     //Scan memory and set size of program in memory
     MemoryMapping<std::string> *mmapping = new MemoryMapping<std::string>();
-    if(mmapping == nullptr)
+    if (mmapping == nullptr)
         std::cout << "We cant initalize memory mapping pointer." << std::endl;
 
-
-    for(auto&& x : std::vector<std::string> { argv, argv + argc })
+    for (auto &&x : std::vector<std::string>{argv, argv + argc})
     {
         // Show memory as args need.
-        if(x == "--kb")
+        if (x == "--kb")
         {
             std::cout << x << std::endl;
             _response = mmapping->GetMemoryResume("K");
@@ -187,20 +185,23 @@ int main(int argc, char *argv[])
             _response = mmapping->GetMemoryResume("M");
         }
 
+        if (x == "--log")
+        {
+            // Show logs
+            std::cout << "Show logs: " << std::endl;
+            FileLogger::Instance()->readLog();
+            exit(0);
+        }
     }
 
-
-
     //if Response is empty go on else show memory.
-    if(_response.empty())
+    if (_response.empty())
         std::cout << "We cant get memory!" << std::endl;
 
-    // Show logs
-    std::cout << "Show logs: " << std::endl;
-    FileLogger::Instance()->readLog();
     // Select menu
     int response = ShowMenu();
     SelectMenu(response, argc, argv);
+
     //Clean and exit.
     delete mmapping;
     mmapping = NULL;

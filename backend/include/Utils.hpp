@@ -89,7 +89,7 @@ class MemoryMapping
                 }
                 else if (typeid(T).name() == "size_t")
                 {
-                    std::cout << "Not Imeplemented.";
+                    std::cout << "Not Implemented.";
                     return 0L;
                 }
 
@@ -111,7 +111,6 @@ class MemoryMapping
         {
             FILE *fp = NULL;
             long rss = 0L;
-
             if ((fp = fopen("/proc/self/statm", "r")) == NULL)
                 return (size_t)0L; /* Can't open? */
 

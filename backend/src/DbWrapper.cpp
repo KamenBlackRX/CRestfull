@@ -1,8 +1,4 @@
 #include "../include/DbWrapper.h"
-#include <mongoc.h>
-#include <bcon.h>
-#include <bson.h>
-#include <stdio.h>
 
 #ifdef WITH_PSQL
     extern "C" {

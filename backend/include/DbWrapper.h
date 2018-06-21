@@ -1,6 +1,15 @@
+#pragma once
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+
+#ifdef WITH_MONGO
+    #include <mongoc.h>
+    #include <bcon.h>
+    #include <bson.h>
+#endif
+
 #include "/usr/include/postgresql/libpq-fe.h"
 
 #pragma warning "This wrapper need implement in C code.\nNeed generate obj for linkage"
@@ -33,5 +42,7 @@ extern "C"
      * @return char** return the response of query.
     */
     char** executeNonPaginateQuery(char*,const char*);
+
+
 
 }

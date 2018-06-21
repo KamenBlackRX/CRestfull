@@ -1,3 +1,5 @@
+#pragma once
+
 #include <mutex>
 #include <iostream>
 #include <string>
@@ -25,12 +27,20 @@ class FileLogger
     */
     void writeToFile(const std::string& messagem, const std::string& _level);
 
+    /**
+     * Find the Log name by searching the sufix in current path 
+     */
+    void findLogName(std::string sufix, std::string* LogName);
+
+
     /* Read all log content from file,
      * send to stdoud and store in a string.
      * @return string  Return content of file to string.
     */
     std::string readLog();
 
+    // public variables
+    std::string LogName;
 
     private:
 
