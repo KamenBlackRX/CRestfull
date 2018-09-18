@@ -19,6 +19,7 @@ void FileLogger::findLogName(std::string sufix, std::string *LogName)
 {
     if (LogName != nullptr)
     {
+        
     }
 }
 
@@ -108,7 +109,7 @@ template <typename Char, typename Traits,
           typename Allocator = std::allocator<Char>>
 auto read_stream_into_string(std::basic_istream<Char, Traits> &in, Allocator alloc = {})
 {
-
+    
     std::basic_ostringstream<Char, Traits, Allocator>
         ss(std::basic_string<Char, Traits, Allocator>(
             std::move(alloc)));
@@ -121,7 +122,9 @@ auto read_stream_into_string(std::basic_istream<Char, Traits> &in, Allocator all
     return ss.str();
 }
 
-/** Read log and Send to string */
+/** 
+ * Read log and send to string 
+*/
 std::string FileLogger::readLog()
 {
     //lock thread using mutex and make operations.
