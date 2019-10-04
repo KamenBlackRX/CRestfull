@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <vector>
 #include <json.h>
@@ -30,6 +32,7 @@ class JsonBuilder
                 }
             }
 
+            // Iterate from String Array and create key with it
             if(in == sizeof(std::vector<std::string>))
             {
                 std::vector<in>::iterator it;
@@ -37,6 +40,11 @@ class JsonBuilder
                 {
                     obj[*it] = *it;
                 }
+            }
+            
+            if(in == sizeof(utility::stringstream_t))
+            {
+                obj.serialize(in);
             }
 
 

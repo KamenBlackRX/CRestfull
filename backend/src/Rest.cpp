@@ -1,4 +1,4 @@
-#include "../include/Rest.h"
+#include "../include/Rest.hpp"
 #include "../include/FileLogger.h"
 //Global pointer for HTTP listner
 std::unique_ptr<Rest> g_http;

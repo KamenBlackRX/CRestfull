@@ -39,3 +39,10 @@
 
 #C objects
 *.gch
+
+#Visual studio configuration
+.vscode
+.vscode/*
+
+#program binary
+cppExemple
